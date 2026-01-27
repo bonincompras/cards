@@ -51,7 +51,7 @@ h1 {
   max-width: 120px;
   margin-bottom: 15px;
   border-radius: 12px;
-  display: block;
+  display: none;
 }
 
 input {
