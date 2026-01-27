@@ -1,0 +1,107 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #1E3C72, #2A5298);
+  color: #fff;
+}
+
+.container {
+  background: #e0f0ff;
+  padding: 35px 30px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+  width: 90%;
+  max-width: 400px;
+  color: #1B1B2F;
+}
+
+h1 {
+  margin-bottom: 25px;
+  font-size: 26px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+.card {
+  background-color: #3A7BD5; /* Azul padrão */
+  color: white;
+  padding: 25px;
+  margin-bottom: 20px;
+  border-radius: 18px;
+  font-size: 28px;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.5s ease;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.card img {
+  max-width: 120px;
+  margin-bottom: 15px;
+  border-radius: 12px;
+  display: block;
+}
+
+input {
+  width: 80%;
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: 1px solid #2A5298;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  border-color: #1E90FF;
+  box-shadow: 0 0 10px rgba(30,144,255,0.4);
+  outline: none;
+}
+
+button {
+  padding: 12px 22px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #1E3C72, #2A5298);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+button:hover {
+  background: linear-gradient(90deg, #2A5298, #1E3C72);
+  transform: translateY(-2px);
+}
+
+#feedback {
+  margin-top: 18px;
+  font-weight: bold;
+  font-size: 18px;
+  min-height: 22px;
+}
+
+.correct {
+  background-color: #28a745 !important; /* verde */
+  color: white;
+  box-shadow: 0 10px 20px rgba(40,167,69,0.5);
+}
+
+.wrong {
+  background-color: #dc3545 !important; /* vermelho */
+  color: white;
+  box-shadow: 0 10px 20px rgba(220,53,69,0.5);
+}
