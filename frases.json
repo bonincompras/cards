@@ -1,0 +1,27 @@
+[
+  {
+    "id": 101,
+    "word": "GOOD MORNING",
+    "translation": "BOM DIA"
+  },
+  {
+    "id": 102,
+    "word": "HOW ARE YOU?",
+    "translation": "COMO VOCÊ ESTÁ?, TUDO BEM?"
+  },
+  {
+    "id": 103,
+    "word": "THANK YOU",
+    "translation": "OBRIGADO, OBRIGADA"
+  },
+  {
+    "id": 104,
+    "word": "I LOVE YOU",
+    "translation": "EU TE AMO"
+  },
+  {
+    "id": 105,
+    "word": "SEE YOU LATER",
+    "translation": "ATÉ MAIS, ATÉ LOGO"
+  }
+]
