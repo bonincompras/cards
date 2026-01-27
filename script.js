@@ -7,30 +7,33 @@ fetch('palavras.json')
   .then(response => response.json())
   .then(data => {
     palavras = data;
-    // Carrega histórico do localStorage
+
+    // Atualiza histórico de cada palavra com o que existe no localStorage
     palavras.forEach(p => {
       const hist = localStorage.getItem(`palavra_${p.id}`);
       p.history = hist ? JSON.parse(hist) : [];
     });
-    novaPalavra();
+
+    novaPalavra(); // mostra a primeira palavra
   })
   .catch(err => {
-    console.error(err);
+    console.error("Erro ao carregar palavras JSON:", err);
     document.getElementById("palavra").textContent = "Erro ao carregar palavras!";
   });
 
-// Calcula peso baseado no histórico
+// Calcula peso baseado nos últimos 5 acertos
 function calcularPeso(palavra) {
   if (!palavra.history || palavra.history.length === 0) return 1;
   const acertos = palavra.history.reduce((sum, val) => sum + (val ? 1 : 0), 0);
-  return 1 - acertos / palavra.history.length;
+  return 1 - acertos / palavra.history.length; // 0 = muito certo, 1 = muito errado
 }
 
-// Escolhe palavra aleatória ponderada
+// Escolhe palavra ponderada pelo histórico
 function escolherPalavra() {
   const pesos = palavras.map(calcularPeso);
   const somaPesos = pesos.reduce((a,b) => a+b, 0);
   let r = Math.random() * somaPesos;
+
   for (let i = 0; i < palavras.length; i++) {
     if (r < pesos[i]) return palavras[i];
     r -= pesos[i];
@@ -38,11 +41,11 @@ function escolherPalavra() {
   return palavras[palavras.length - 1];
 }
 
-// Exibe nova palavra
+// Mostra nova palavra
 function novaPalavra() {
   palavraAtual = escolherPalavra();
-
   mostrandoIngles = Math.random() < 0.5;
+
   const card = document.getElementById("card");
   const palavraEl = document.getElementById("palavra");
   palavraEl.textContent = mostrandoIngles ? palavraAtual.word.toUpperCase() : palavraAtual.translation.toUpperCase();
@@ -69,15 +72,16 @@ function verificarResposta() {
   const card = document.getElementById("card");
   const feedback = document.getElementById("feedback");
 
+  // Define a resposta correta dependendo do idioma mostrado
   const correta = mostrandoIngles ? palavraAtual.translation.toUpperCase() : palavraAtual.word.toUpperCase();
   const acertou = resposta === correta;
 
-  // Atualiza histórico local
+  // Atualiza histórico apenas no localStorage
   if (!palavraAtual.history) palavraAtual.history = [];
   palavraAtual.history.push(acertou);
   if (palavraAtual.history.length > 5) palavraAtual.history.shift();
 
-  // Salva no localStorage
+  // Salva no localStorage usando o id
   localStorage.setItem(`palavra_${palavraAtual.id}`, JSON.stringify(palavraAtual.history));
 
   // Feedback visual
