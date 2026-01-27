@@ -4,7 +4,7 @@
     "word": "THE",
     "translation": "O, A, OS, AS",
     "image": "https://via.placeholder.com/150",
-    "history": []   // para armazenar últimos 5 acertos (true/false)
+    "history": []
   },
   {
     "id": 2,
