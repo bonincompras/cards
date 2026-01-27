@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "word": "THE",
+    "translation": "O, A, OS, AS",
+    "image": "https://via.placeholder.com/150",
+    "history": []   // para armazenar últimos 5 acertos (true/false)
+  },
+  {
+    "id": 2,
+    "word": "BE",
+    "translation": "SER, ESTAR",
+    "image": "https://via.placeholder.com/150",
+    "history": []
+  },
+  {
+    "id": 3,
+    "word": "DOG",
+    "translation": "CACHORRO",
+    "image": "https://via.placeholder.com/150",
+    "history": []
+  }
+]
