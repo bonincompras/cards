@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flashcards Inglês</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards Inglês</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Aprenda Inglês com Flashcards</h1>
-    
-    <div id="card" class="card">
-      <img id="imagem" src="" alt="Imagem da palavra" style="display:none">
-      <p id="palavra">CARREGANDO...</p>
-    </div>
 
-    <input type="text" id="resposta" placeholder="Digite a tradução aqui">
+<div class="container">
+  <h1>Flashcards Inglês</h1>
+
+  <label><input type="checkbox" id="usarFrases"> Usar frases alternativas</label>
+
+  <div id="card">
+    <div id="palavra" class="palavra"></div>
+    <input type="text" id="resposta" placeholder="Digite a resposta">
     <button id="verificar">Verificar</button>
-
-    <p id="feedback"></p>
+    <div id="feedback"></div>
   </div>
+</div>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
