@@ -1,4 +1,5 @@
-{"id": 1, "word": "A", "translation": "UM"},
+[
+  {"id": 1, "word": "A", "translation": "UM"},
 {"id": 2, "word": "ABANDON", "translation": "ABANDONAR"},
 {"id": 3, "word": "ABILITY", "translation": "HABILIDADE"},
 {"id": 4, "word": "ABLE", "translation": "CAPAZ"},
@@ -2974,4 +2975,5 @@
 {"id": 2974, "word": "ZERO", "translation": "ZERO"},
 {"id": 2975, "word": "ZONE", "translation": "ZONA"},
 {"id": 2976, "word": "FALSE", "translation": "FALSO"},
-{"id": 2977, "word": "TRUE", "translation": "VERDADEIRO"},
+{"id": 2977, "word": "TRUE", "translation": "VERDADEIRO"}
+]
