@@ -68,20 +68,28 @@ function novaPalavra() {
 
 // Verifica resposta
 function verificarResposta() {
-  const resposta = document.getElementById("resposta").value.trim().toUpperCase();
+  const inputEl = document.getElementById("resposta");
+  const resposta = inputEl.value.trim().toUpperCase();
   const card = document.getElementById("card");
   const feedback = document.getElementById("feedback");
 
-  // Define a resposta correta dependendo do idioma mostrado
-  const correta = mostrandoIngles ? palavraAtual.translation.toUpperCase() : palavraAtual.word.toUpperCase();
-  const acertou = resposta === correta;
+  let opcoesCorretas;
+  let acertou;
+
+  if (mostrandoIngles) {
+    // Se estiver mostrando inglês, aceita qualquer tradução
+    opcoesCorretas = palavraAtual.translation.split(',').map(t => t.trim().toUpperCase());
+    acertou = opcoesCorretas.includes(resposta);
+  } else {
+    // Se estiver mostrando português, a resposta correta é a palavra em inglês
+    opcoesCorretas = [palavraAtual.word.toUpperCase()];
+    acertou = opcoesCorretas.includes(resposta);
+  }
 
   // Atualiza histórico apenas no localStorage
   if (!palavraAtual.history) palavraAtual.history = [];
   palavraAtual.history.push(acertou);
   if (palavraAtual.history.length > 5) palavraAtual.history.shift();
-
-  // Salva no localStorage usando o id
   localStorage.setItem(`palavra_${palavraAtual.id}`, JSON.stringify(palavraAtual.history));
 
   // Feedback visual
@@ -89,10 +97,11 @@ function verificarResposta() {
     feedback.textContent = "✅ Correto!";
     card.classList.add("correct");
   } else {
-    feedback.textContent = `❌ Errado! A resposta correta é: ${correta}`;
+    feedback.textContent = `❌ Errado! A resposta correta é: ${opcoesCorretas.join(', ')}`;
     card.classList.add("wrong");
   }
 
+  // Mostra nova palavra após 1,5s
   setTimeout(novaPalavra, 1500);
 }
 
