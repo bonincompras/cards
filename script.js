@@ -1,5 +1,5 @@
 let palavras = [];
-let frasesAlternativas = []; // JSON de frases
+let frasesAlternativas = [];
 let palavraAtual;
 let mostrandoIngles = true;
 let usarFrases = false;
@@ -20,11 +20,11 @@ fetch('palavras.json')
     document.getElementById("palavra").textContent = "Erro ao carregar palavras!";
   });
 
-// Evento checkbox
+// Checkbox frases
 document.getElementById("usarFrases").addEventListener("change", e => {
   usarFrases = e.target.checked;
+
   if (usarFrases && frasesAlternativas.length === 0) {
-    // Carrega JSON de frases se ainda não carregou
     fetch('frases.json')
       .then(res => res.json())
       .then(data => {
@@ -41,43 +41,47 @@ document.getElementById("usarFrases").addEventListener("change", e => {
   }
 });
 
-// Função de peso adaptativo
+// Peso adaptativo
 function calcularPeso(palavra) {
   if (!palavra.history || palavra.history.length === 0) return 1;
-  const acertos = palavra.history.reduce((sum, val) => sum + (val ? 1 : 0), 0);
+  const acertos = palavra.history.reduce((s, v) => s + (v ? 1 : 0), 0);
   return 1 - acertos / palavra.history.length;
 }
 
-// Escolhe palavra ponderada
+// Escolhe palavra
 function escolherPalavra() {
   const lista = usarFrases ? frasesAlternativas : palavras;
   const pesos = lista.map(calcularPeso);
-  const soma = pesos.reduce((a,b)=>a+b,0);
+  const soma = pesos.reduce((a, b) => a + b, 0);
+
   let r = Math.random() * soma;
-  for (let i=0;i<lista.length;i++){
+  for (let i = 0; i < lista.length; i++) {
     if (r < pesos[i]) return lista[i];
     r -= pesos[i];
   }
-  return lista[lista.length-1];
+  return lista[lista.length - 1];
 }
 
-// Mostra nova palavra
+// Nova palavra
 function novaPalavra() {
   palavraAtual = escolherPalavra();
   mostrandoIngles = Math.random() < 0.5;
 
   const card = document.getElementById("card");
   const palavraEl = document.getElementById("palavra");
-  palavraEl.textContent = mostrandoIngles ? palavraAtual.word.toUpperCase() : palavraAtual.translation.toUpperCase();
 
-  const input = document.getElementById("resposta");
-  input.value = "";
-  input.focus();
+  palavraEl.textContent = mostrandoIngles
+    ? palavraAtual.word.toUpperCase()
+    : palavraAtual.translation.toUpperCase();
+
+  document.getElementById("resposta").value = "";
+  document.getElementById("resposta").focus();
   document.getElementById("feedback").textContent = "";
-  card.classList.remove("correct","wrong");
+
+  card.classList.remove("correct", "wrong");
 }
 
-// Verifica resposta
+// Verificar resposta (SALVA histórico)
 function verificarResposta() {
   const resposta = document.getElementById("resposta").value.trim().toUpperCase();
   const card = document.getElementById("card");
@@ -87,21 +91,20 @@ function verificarResposta() {
   let acertou;
 
   if (mostrandoIngles) {
-    // Se estiver mostrando inglês, aceita qualquer tradução
-    opcoesCorretas = palavraAtual.translation.split(',').map(t => t.trim().toUpperCase());
+    opcoesCorretas = palavraAtual.translation
+      .split(',')
+      .map(t => t.trim().toUpperCase());
     acertou = opcoesCorretas.includes(resposta);
   } else {
     opcoesCorretas = [palavraAtual.word.toUpperCase()];
     acertou = opcoesCorretas.includes(resposta);
   }
 
-  // Atualiza histórico no localStorage
-  if (!palavraAtual.history) palavraAtual.history = [];
+  // Atualiza histórico
   palavraAtual.history.push(acertou);
   if (palavraAtual.history.length > 5) palavraAtual.history.shift();
   localStorage.setItem(`palavra_${palavraAtual.id}`, JSON.stringify(palavraAtual.history));
 
-  // Feedback visual
   if (acertou) {
     feedback.textContent = "✅ Correto!";
     card.classList.add("correct");
@@ -113,8 +116,33 @@ function verificarResposta() {
   setTimeout(novaPalavra, 1500);
 }
 
+// Mostrar resposta (NÃO salva histórico)
+document.getElementById("mostrarResposta").addEventListener("click", () => {
+  const feedback = document.getElementById("feedback");
+  const card = document.getElementById("card");
+
+  let respostaCorreta;
+
+  if (mostrandoIngles) {
+    respostaCorreta = palavraAtual.translation
+      .split(',')
+      .map(t => t.trim().toUpperCase())
+      .join(', ');
+  } else {
+    respostaCorreta = palavraAtual.word.toUpperCase();
+  }
+
+  feedback.textContent = `👀 Resposta: ${respostaCorreta}`;
+  card.classList.remove("correct", "wrong");
+
+  setTimeout(() => {
+    feedback.textContent = "";
+    novaPalavra();
+  }, 1500);
+});
+
 // Eventos
 document.getElementById("verificar").addEventListener("click", verificarResposta);
-document.getElementById("resposta").addEventListener("keypress", e=>{
+document.getElementById("resposta").addEventListener("keypress", e => {
   if (e.key === "Enter") verificarResposta();
 });
