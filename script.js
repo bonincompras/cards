@@ -2,17 +2,16 @@ let palavras = [];
 let palavraAtual;
 let mostrandoIngles = true;
 
-// Carrega JSON com tratamento de erros
+// Carrega JSON
 fetch('palavras.json')
-  .then(response => {
-    if (!response.ok) throw new Error("Erro ao carregar JSON");
-    return response.json();
-  })
+  .then(response => response.json())
   .then(data => {
     palavras = data;
-    if (!palavras || palavras.length === 0) {
-      throw new Error("JSON vazio ou mal formatado");
-    }
+    // Carrega histórico do localStorage
+    palavras.forEach(p => {
+      const hist = localStorage.getItem(`palavra_${p.id}`);
+      p.history = hist ? JSON.parse(hist) : [];
+    });
     novaPalavra();
   })
   .catch(err => {
@@ -20,11 +19,11 @@ fetch('palavras.json')
     document.getElementById("palavra").textContent = "Erro ao carregar palavras!";
   });
 
-// Função para calcular o peso baseado no histórico
+// Calcula peso baseado no histórico
 function calcularPeso(palavra) {
   if (!palavra.history || palavra.history.length === 0) return 1;
   const acertos = palavra.history.reduce((sum, val) => sum + (val ? 1 : 0), 0);
-  return 1 - acertos / palavra.history.length; // 0 a 1
+  return 1 - acertos / palavra.history.length;
 }
 
 // Escolhe palavra aleatória ponderada
@@ -32,7 +31,6 @@ function escolherPalavra() {
   const pesos = palavras.map(calcularPeso);
   const somaPesos = pesos.reduce((a,b) => a+b, 0);
   let r = Math.random() * somaPesos;
-
   for (let i = 0; i < palavras.length; i++) {
     if (r < pesos[i]) return palavras[i];
     r -= pesos[i];
@@ -40,7 +38,7 @@ function escolherPalavra() {
   return palavras[palavras.length - 1];
 }
 
-// Função para pegar nova palavra
+// Exibe nova palavra
 function novaPalavra() {
   palavraAtual = escolherPalavra();
 
@@ -74,10 +72,15 @@ function verificarResposta() {
   const correta = mostrandoIngles ? palavraAtual.translation.toUpperCase() : palavraAtual.word.toUpperCase();
   const acertou = resposta === correta;
 
+  // Atualiza histórico local
   if (!palavraAtual.history) palavraAtual.history = [];
   palavraAtual.history.push(acertou);
   if (palavraAtual.history.length > 5) palavraAtual.history.shift();
 
+  // Salva no localStorage
+  localStorage.setItem(`palavra_${palavraAtual.id}`, JSON.stringify(palavraAtual.history));
+
+  // Feedback visual
   if (acertou) {
     feedback.textContent = "✅ Correto!";
     card.classList.add("correct");
