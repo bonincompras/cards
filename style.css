@@ -10,31 +10,50 @@ body {
 }
 
 .container {
-  text-align: center;
   width: 100%;
   max-width: 500px;
+  text-align: center;
 }
 
-h1 {
-  margin-bottom: 20px;
+.checkbox {
+  display: block;
+  margin-bottom: 15px;
 }
 
 #card {
-  background-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.1);
   padding: 30px;
-  border-radius: 15px;
+  border-radius: 16px;
   box-shadow: 0 0 20px rgba(0,0,0,0.5);
-  transition: all 0.3s ease;
+  animation: fadeInUp 0.4s ease;
 }
 
-#card.correct {
-  background-color: #4caf50;
-  color: #fff;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-#card.wrong {
-  background-color: #f44336;
-  color: #fff;
+.direcao {
+  font-size: 0.85rem;
+  font-weight: bold;
+  padding: 5px 12px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+#card.en .direcao {
+  background: #2196f3;
+}
+
+#card.pt .direcao {
+  background: #4caf50;
 }
 
 .palavra {
@@ -45,30 +64,59 @@ h1 {
 
 input[type="text"] {
   width: 80%;
-  padding: 10px;
-  font-size: 1rem;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 10px;
   border: none;
+  font-size: 1rem;
   margin-bottom: 15px;
 }
 
-button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background-color: #2196f3;
-  color: white;
-  transition: 0.2s;
+.botoes {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
-button:hover {
-  background-color: #0b7dda;
+button {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  background: #2196f3;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 #feedback {
   margin-top: 15px;
   font-weight: bold;
-  font-size: 1.1rem;
+}
+
+#card.correct {
+  background-color: #4caf50;
+  animation: pulse 0.4s ease;
+}
+
+#card.wrong {
+  background-color: #f44336;
+  animation: shake 0.4s ease;
+}
+
+@keyframes pulse {
+  50% { transform: scale(1.04); }
+}
+
+@keyframes shake {
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
 }
