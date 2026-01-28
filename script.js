@@ -17,10 +17,6 @@ fetch('palavras.json')
       p.history = hist ? JSON.parse(hist) : [];
     });
     novaPalavra();
-  })
-  .catch(err => {
-    console.error(err);
-    document.getElementById("palavra").textContent = "Erro ao carregar palavras";
   });
 
 // ====================
@@ -28,7 +24,6 @@ fetch('palavras.json')
 // ====================
 document.getElementById("usarFrases").addEventListener("change", e => {
   usarFrases = e.target.checked;
-
   if (usarFrases && frasesAlternativas.length === 0) {
     fetch('frases.json')
       .then(res => res.json())
@@ -40,9 +35,7 @@ document.getElementById("usarFrases").addEventListener("change", e => {
         });
         novaPalavra();
       });
-  } else {
-    novaPalavra();
-  }
+  } else { novaPalavra(); }
 });
 
 // ====================
@@ -143,7 +136,7 @@ function verificarResposta() {
 }
 
 // ====================
-// Mostrar resposta → Continuar (com delay)
+// Mostrar resposta → Continuar
 // ====================
 document.getElementById("mostrarResposta").addEventListener("click", () => {
   const feedback = document.getElementById("feedback");
@@ -151,19 +144,14 @@ document.getElementById("mostrarResposta").addEventListener("click", () => {
   const input = document.getElementById("resposta");
   const verificarBtn = document.getElementById("verificar");
 
-  // CONTINUAR
   if (aguardandoContinuar) {
     novaPalavra();
     return;
   }
 
   let respostaCorreta;
-
   if (mostrandoIngles) {
-    respostaCorreta = palavraAtual.translation
-      .split(',')
-      .map(t => t.trim().toUpperCase())
-      .join(', ');
+    respostaCorreta = palavraAtual.translation.split(',').map(t => t.trim().toUpperCase()).join(', ');
   } else {
     respostaCorreta = palavraAtual.word.toUpperCase();
   }
@@ -175,7 +163,6 @@ document.getElementById("mostrarResposta").addEventListener("click", () => {
   btn.disabled = true;
   btn.textContent = "Aguarde...";
 
-  // ⏱️ delay de 1 segundo
   setTimeout(() => {
     aguardandoContinuar = true;
     btn.disabled = false;
@@ -184,12 +171,43 @@ document.getElementById("mostrarResposta").addEventListener("click", () => {
 });
 
 // ====================
-// Eventos
+// Fala da palavra/frase
+// ====================
+function falarTexto(texto, idioma, rate = 0.9) {
+  if (!('speechSynthesis' in window)) return;
+
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(texto);
+  utterance.lang = idioma;
+  utterance.rate = rate;
+  utterance.pitch = 1;
+
+  const vozes = window.speechSynthesis.getVoices();
+  const vozPreferida = vozes.find(v => v.lang.startsWith(idioma));
+  if (vozPreferida) utterance.voice = vozPreferida;
+
+  const btn = document.getElementById("falar");
+  btn.classList.add("falando");
+  utterance.onend = () => btn.classList.remove("falando");
+
+  window.speechSynthesis.speak(utterance);
+}
+
+// Evento do botão de áudio
+document.getElementById("falar").addEventListener("click", () => {
+  const texto = mostrandoIngles ? palavraAtual.word : palavraAtual.translation.split(',')[0];
+  const idioma = mostrandoIngles ? document.getElementById("sotaque").value : "pt-BR";
+  const rate = parseFloat(document.getElementById("velocidade").value);
+  falarTexto(texto, idioma, rate);
+});
+
+// ====================
+// Eventos gerais
 // ====================
 document.getElementById("verificar").addEventListener("click", verificarResposta);
-
 document.getElementById("resposta").addEventListener("keypress", e => {
-  if (e.key === "Enter" && !aguardandoContinuar) {
-    verificarResposta();
-  }
+  if (e.key === "Enter" && !aguardandoContinuar) verificarResposta();
 });
+
+// Carregar vozes (compatibilidade)
+window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
