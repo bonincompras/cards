@@ -3,8 +3,11 @@ let frasesAlternativas = [];
 let palavraAtual;
 let mostrandoIngles = true;
 let usarFrases = false;
+let aguardandoContinuar = false;
 
-// Carrega JSON principal
+// ====================
+// Carregar palavras
+// ====================
 fetch('palavras.json')
   .then(res => res.json())
   .then(data => {
@@ -16,11 +19,13 @@ fetch('palavras.json')
     novaPalavra();
   })
   .catch(err => {
-    console.error("Erro ao carregar palavras:", err);
-    document.getElementById("palavra").textContent = "Erro ao carregar palavras!";
+    console.error(err);
+    document.getElementById("palavra").textContent = "Erro ao carregar palavras";
   });
 
+// ====================
 // Checkbox frases
+// ====================
 document.getElementById("usarFrases").addEventListener("change", e => {
   usarFrases = e.target.checked;
 
@@ -34,21 +39,21 @@ document.getElementById("usarFrases").addEventListener("change", e => {
           p.history = hist ? JSON.parse(hist) : [];
         });
         novaPalavra();
-      })
-      .catch(err => console.error("Erro ao carregar frases:", err));
+      });
   } else {
     novaPalavra();
   }
 });
 
+// ====================
 // Peso adaptativo
-function calcularPeso(palavra) {
-  if (!palavra.history || palavra.history.length === 0) return 1;
-  const acertos = palavra.history.reduce((s, v) => s + (v ? 1 : 0), 0);
-  return 1 - acertos / palavra.history.length;
+// ====================
+function calcularPeso(p) {
+  if (!p.history || p.history.length === 0) return 1;
+  const acertos = p.history.filter(v => v).length;
+  return 1 - acertos / p.history.length;
 }
 
-// Escolhe palavra
 function escolherPalavra() {
   const lista = usarFrases ? frasesAlternativas : palavras;
   const pesos = lista.map(calcularPeso);
@@ -62,45 +67,66 @@ function escolherPalavra() {
   return lista[lista.length - 1];
 }
 
+// ====================
 // Nova palavra
+// ====================
 function novaPalavra() {
   palavraAtual = escolherPalavra();
   mostrandoIngles = Math.random() < 0.5;
+  aguardandoContinuar = false;
 
   const card = document.getElementById("card");
   const palavraEl = document.getElementById("palavra");
+  const direcaoEl = document.getElementById("direcao");
+  const input = document.getElementById("resposta");
+  const verificarBtn = document.getElementById("verificar");
+  const mostrarBtn = document.getElementById("mostrarResposta");
 
-  palavraEl.textContent = mostrandoIngles
-    ? palavraAtual.word.toUpperCase()
-    : palavraAtual.translation.toUpperCase();
+  if (mostrandoIngles) {
+    palavraEl.textContent = palavraAtual.word.toUpperCase();
+    direcaoEl.textContent = "🇺🇸 EN → PT";
+    card.classList.add("en");
+    card.classList.remove("pt");
+  } else {
+    palavraEl.textContent = palavraAtual.translation.toUpperCase();
+    direcaoEl.textContent = "🇧🇷 PT → EN";
+    card.classList.add("pt");
+    card.classList.remove("en");
+  }
 
-  document.getElementById("resposta").value = "";
-  document.getElementById("resposta").focus();
+  input.value = "";
+  input.disabled = false;
+  verificarBtn.disabled = false;
+  mostrarBtn.disabled = false;
+  mostrarBtn.textContent = "Mostrar Resposta";
+
   document.getElementById("feedback").textContent = "";
-
   card.classList.remove("correct", "wrong");
+
+  input.focus();
 }
 
-// Verificar resposta (SALVA histórico)
+// ====================
+// Verificar resposta
+// ====================
 function verificarResposta() {
-  const resposta = document.getElementById("resposta").value.trim().toUpperCase();
-  const card = document.getElementById("card");
-  const feedback = document.getElementById("feedback");
+  if (aguardandoContinuar) return;
 
-  let opcoesCorretas;
+  const resposta = document.getElementById("resposta").value.trim().toUpperCase();
+  const feedback = document.getElementById("feedback");
+  const card = document.getElementById("card");
+
+  let opcoes;
   let acertou;
 
   if (mostrandoIngles) {
-    opcoesCorretas = palavraAtual.translation
-      .split(',')
-      .map(t => t.trim().toUpperCase());
-    acertou = opcoesCorretas.includes(resposta);
+    opcoes = palavraAtual.translation.split(',').map(t => t.trim().toUpperCase());
+    acertou = opcoes.includes(resposta);
   } else {
-    opcoesCorretas = [palavraAtual.word.toUpperCase()];
-    acertou = opcoesCorretas.includes(resposta);
+    opcoes = [palavraAtual.word.toUpperCase()];
+    acertou = opcoes.includes(resposta);
   }
 
-  // Atualiza histórico
   palavraAtual.history.push(acertou);
   if (palavraAtual.history.length > 5) palavraAtual.history.shift();
   localStorage.setItem(`palavra_${palavraAtual.id}`, JSON.stringify(palavraAtual.history));
@@ -109,17 +135,27 @@ function verificarResposta() {
     feedback.textContent = "✅ Correto!";
     card.classList.add("correct");
   } else {
-    feedback.textContent = `❌ Errado! Resposta correta: ${opcoesCorretas.join(', ')}`;
+    feedback.textContent = `❌ Errado! ${opcoes.join(", ")}`;
     card.classList.add("wrong");
   }
 
   setTimeout(novaPalavra, 1500);
 }
 
-// Mostrar resposta (NÃO salva histórico)
+// ====================
+// Mostrar resposta → Continuar (com delay)
+// ====================
 document.getElementById("mostrarResposta").addEventListener("click", () => {
   const feedback = document.getElementById("feedback");
-  const card = document.getElementById("card");
+  const btn = document.getElementById("mostrarResposta");
+  const input = document.getElementById("resposta");
+  const verificarBtn = document.getElementById("verificar");
+
+  // CONTINUAR
+  if (aguardandoContinuar) {
+    novaPalavra();
+    return;
+  }
 
   let respostaCorreta;
 
@@ -133,16 +169,27 @@ document.getElementById("mostrarResposta").addEventListener("click", () => {
   }
 
   feedback.textContent = `👀 Resposta: ${respostaCorreta}`;
-  card.classList.remove("correct", "wrong");
 
+  input.disabled = true;
+  verificarBtn.disabled = true;
+  btn.disabled = true;
+  btn.textContent = "Aguarde...";
+
+  // ⏱️ delay de 1 segundo
   setTimeout(() => {
-    feedback.textContent = "";
-    novaPalavra();
-  }, 1500);
+    aguardandoContinuar = true;
+    btn.disabled = false;
+    btn.textContent = "Continuar";
+  }, 1000);
 });
 
+// ====================
 // Eventos
+// ====================
 document.getElementById("verificar").addEventListener("click", verificarResposta);
+
 document.getElementById("resposta").addEventListener("keypress", e => {
-  if (e.key === "Enter") verificarResposta();
+  if (e.key === "Enter" && !aguardandoContinuar) {
+    verificarResposta();
+  }
 });
