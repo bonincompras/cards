@@ -1,7 +1,136 @@
 /* ==================== */
-/* ÁUDIO E SELECTS      */
+/* BODY E CONTAINER      */
 /* ==================== */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
 
+.container {
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.checkbox {
+  display: block;
+  margin-bottom: 15px;
+}
+
+/* ==================== */
+/* CARD                 */
+/* ==================== */
+#card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  animation: fadeInUp 0.4s ease;
+  transition: all 0.3s ease;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+#card.correct {
+  background-color: #4caf50;
+  animation: pulse 0.4s ease;
+}
+
+#card.wrong {
+  background-color: #f44336;
+  animation: shake 0.4s ease;
+}
+
+@keyframes pulse { 50% { transform: scale(1.04); } }
+@keyframes shake {
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+}
+
+/* ==================== */
+/* DIREÇÃO DA PALAVRA    */
+/* ==================== */
+.direcao {
+  font-size: 0.85rem;
+  font-weight: bold;
+  padding: 5px 12px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+#card.en .direcao { background: #2196f3; }
+#card.pt .direcao { background: #4caf50; }
+
+/* ==================== */
+/* PALAVRA              */
+/* ==================== */
+.palavra {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* ==================== */
+/* INPUT DE RESPOSTA     */
+/* ==================== */
+input[type="text"] {
+  width: 80%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+/* ==================== */
+/* BOTOES               */
+/* ==================== */
+.botoes {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+button {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  background: #2196f3;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:active { transform: scale(0.95); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ==================== */
+/* FEEDBACK             */
+/* ==================== */
+#feedback {
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* ==================== */
+/* ÁUDIO E SELECTS       */
+/* ==================== */
 .audio-controls {
   margin-bottom: 15px;
   display: flex;
@@ -27,13 +156,8 @@
   position: relative;
 }
 
-.btn-audio:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.btn-audio:active {
-  transform: scale(0.9);
-}
+.btn-audio:hover { background: rgba(255, 255, 255, 0.2); }
+.btn-audio:active { transform: scale(0.9); }
 
 /* Pulso sutil enquanto fala */
 .btn-audio.falando {
@@ -47,10 +171,7 @@
   100% { transform: scale(1); box-shadow: 0 0 8px 2px rgba(255,255,255,0.4); }
 }
 
-/* ==================== */
-/* SELECTS MODERNOS      */
-/* ==================== */
-
+/* SELECTS (velocidade e sotaque) */
 .audio-controls select {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -67,14 +188,8 @@
 }
 
 /* Hover e foco */
-.audio-controls select:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.audio-controls select:focus {
-  outline: none;
-  border-color: #2196f3;
-}
+.audio-controls select:hover { background: rgba(255, 255, 255, 0.25); }
+.audio-controls select:focus { outline: none; border-color: #2196f3; }
 
 /* Seta customizada branca */
 .audio-controls select {
